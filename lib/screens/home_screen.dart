@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/desenho.dart';
 import '../data/sample_data.dart';
 import 'gallery_screen.dart';
 
