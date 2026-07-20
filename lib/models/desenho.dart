@@ -20,10 +20,12 @@ class Categoria {
   final String id;
   final String nome;
   final String icone;
+  final bool premium;
 
   const Categoria({
     required this.id,
     required this.nome,
     required this.icone,
+    this.premium = false,
   });
 }
