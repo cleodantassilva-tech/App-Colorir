@@ -6,6 +6,9 @@ const List<Categoria> categorias = [
   Categoria(id: 'animais', nome: 'Animais', icone: '🐶'),
   Categoria(id: 'dinossauros', nome: 'Dinossauros', icone: '🦕'),
   Categoria(id: 'veiculos', nome: 'Veículos', icone: '🚗'),
+  Categoria(id: 'jardim', nome: 'Jardim', icone: '🌷', premium: true),
+  Categoria(id: 'dragao', nome: 'Dragão', icone: '🐉', premium: true),
+  Categoria(id: 'monster_truck', nome: 'Monster Truck', icone: '🚚', premium: true),
   Categoria(id: 'datas_comemorativas', nome: 'Datas Comemorativas', icone: '🎉'),
 ];
 
