@@ -1,20 +1,26 @@
 import '../models/desenho.dart';
 
-/// Lista de categorias exibidas na Home.
-/// Substitua/adicione conforme suas categorias reais.
 const List<Categoria> categorias = [
   Categoria(id: 'animais', nome: 'Animais', icone: '🐶'),
   Categoria(id: 'dinossauros', nome: 'Dinossauros', icone: '🦕'),
   Categoria(id: 'veiculos', nome: 'Veículos', icone: '🚗'),
+  Categoria(id: 'datas_comemorativas', nome: 'Datas Comemorativas', icone: '🎉'),
+  Categoria(id: 'princesas', nome: 'Princesas', icone: '👑', premium: true),
+  Categoria(id: 'unicornio', nome: 'Unicórnio', icone: '🦄', premium: true),
+  Categoria(id: 'gatinhos', nome: 'Gatinhos', icone: '🐱', premium: true),
+  Categoria(id: 'pandinhas', nome: 'Pandinhas', icone: '🐼', premium: true),
+  Categoria(id: 'cristao', nome: 'Cristão', icone: '✝️', premium: true),
+  Categoria(id: 'animais_bosque', nome: 'Animais do Bosque', icone: '🦔', premium: true),
+  Categoria(id: 'doces_fofos', nome: 'Doces Fofos', icone: '🍭', premium: true),
+  Categoria(id: 'cactus', nome: 'Cactus', icone: '🌵', premium: true),
+  Categoria(id: 'raposinha', nome: 'Raposinha', icone: '🦊', premium: true),
+  Categoria(id: 'monstros_fofos', nome: 'Monstros Fofos', icone: '🦖', premium: true),
   Categoria(id: 'jardim', nome: 'Jardim', icone: '🌷', premium: true),
   Categoria(id: 'dragao', nome: 'Dragão', icone: '🐉', premium: true),
   Categoria(id: 'monster_truck', nome: 'Monster Truck', icone: '🚚', premium: true),
-  Categoria(id: 'datas_comemorativas', nome: 'Datas Comemorativas', icone: '🎉'),
+  Categoria(id: 'outros', nome: 'Outros', icone: '✨', premium: true),
 ];
 
-/// Lista de desenhos de exemplo.
-/// Em produção, isso pode vir de um JSON local, de um Firestore,
-/// ou ser gerado automaticamente lendo os arquivos da pasta assets/.
 final List<Desenho> desenhosExemplo = [
   const Desenho(
     id: 'animal_01',
