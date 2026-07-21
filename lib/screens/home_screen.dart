@@ -145,6 +145,7 @@ class _CategoriaCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Stack(
+          Alignment.center,
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
