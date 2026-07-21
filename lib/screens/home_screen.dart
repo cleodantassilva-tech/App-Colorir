@@ -97,23 +97,31 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.1,
-                ),
-                itemCount: categorias.length,
-                itemBuilder: (context, index) {
-                  final categoria = categorias[index];
-                  final bloqueada = categoria.premium && !_desbloqueado;
-                  return _CategoriaCard(
-                    categoria: categoria,
-                    bloqueada: bloqueada,
-                    onTap: () => _abrirCategoria(categoria),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  const spacing = 16.0;
+                  final cardWidth = (constraints.maxWidth - spacing) / 2;
+                  final cardHeight = cardWidth / 1.1;
+
+                  return Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: spacing,
+                    runSpacing: spacing,
+                    children: categorias.map((categoria) {
+                      final bloqueada =
+                          categoria.premium && !_desbloqueado;
+                      return SizedBox(
+                        width: cardWidth,
+                        height: cardHeight,
+                        child: _CategoriaCard(
+                          categoria: categoria,
+                          bloqueada: bloqueada,
+                          onTap: () => _abrirCategoria(categoria),
+                        ),
+                      );
+                    }).toList(),
                   );
                 },
               ),
@@ -145,7 +153,7 @@ class _CategoriaCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Stack(
-          Alignment.center,
+          alignment: Alignment.center,
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -175,19 +183,19 @@ class _CategoriaCard extends StatelessWidget {
                     color: Colors.deepOrange,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    'PREMIUM',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(
+                        Icons.workspace_premium,
+                        color: Colors.white,
+                        size: 12,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Premium',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
