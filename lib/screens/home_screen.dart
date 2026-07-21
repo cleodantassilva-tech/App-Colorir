@@ -199,3 +199,14 @@ class _CategoriaCard extends StatelessWidget {
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
