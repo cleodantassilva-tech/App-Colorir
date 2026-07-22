@@ -43,6 +43,13 @@ final List<Desenho> desenhosExemplo = [
     caminhoArquivo: 'assets/categorias/veiculos/carro_corrida.pdf',
     thumbnail: 'assets/categorias/veiculos/carro_corrida_thumb.png',
   ),
+  const Desenho(
+    id: 'monstros_fofos_01',
+    titulo: 'Monstrinho Fofo',
+    categoria: 'monstros_fofos',
+    caminhoArquivo: 'assets/categorias/monstros_fofos/monstros_fofos_01.pdf',
+    thumbnail: 'assets/categorias/monstros_fofos/monstros_fofos_01_thumb.png',
+  ),
 ];
 
 List<Desenho> desenhosPorCategoria(String categoriaId) {
