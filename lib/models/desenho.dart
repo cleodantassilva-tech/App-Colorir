@@ -21,11 +21,13 @@ class Categoria {
   final String nome;
   final String icone;
   final bool premium;
+  final String? imagemCapa; // caminho de uma miniatura real da categoria
 
   const Categoria({
     required this.id,
     required this.nome,
     required this.icone,
     this.premium = false,
+    this.imagemCapa,
   });
 }
