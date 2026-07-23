@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/sample_data.dart';
 import '../models/desenho.dart';
+import '../services/asset_scanner.dart';
 import '../services/favorites_service.dart';
 import 'detail_screen.dart';
 
@@ -23,8 +24,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   Future<void> _carregarFavoritos() async {
     final ids = await FavoritesService.obterFavoritos();
+    final categoriaIds = categorias.map((c) => c.id).toList();
+    final todos = await AssetScanner.listarTodos(categoriaIds);
     setState(() {
-      _favoritos = desenhosExemplo.where((d) => ids.contains(d.id)).toList();
+      _favoritos = todos.where((d) => ids.contains(d.id)).toList();
       _carregando = false;
     });
   }
