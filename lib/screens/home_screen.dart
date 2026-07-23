@@ -159,11 +159,6 @@ class _CategoriaCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(categoria.icone, style: const TextStyle(fontSize: 48)),
-                      ),
-                    ),
-                  )
-                else
-                  Text(categoria.icone, style: const TextStyle(fontSize: 48)),
                 const SizedBox(height: 8),
                 Text(
                   categoria.nome,
