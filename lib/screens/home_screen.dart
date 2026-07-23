@@ -158,17 +158,7 @@ class _CategoriaCard extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (categoria.imagemCapa != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      categoria.imagemCapa!,
-                      width: 64,
-                      height: 64,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Text(
-                        categoria.icone,
-                        style: const TextStyle(fontSize: 48),
+                Text(categoria.icone, style: const TextStyle(fontSize: 48)),
                       ),
                     ),
                   )
