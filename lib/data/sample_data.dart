@@ -1,5 +1,9 @@
 import '../models/desenho.dart';
 
+/// Lista de categorias exibidas na Home.
+/// Os DESENHOS de cada categoria não precisam mais ser listados aqui —
+/// o app detecta automaticamente os arquivos dentro de cada pasta
+/// (veja lib/services/asset_scanner.dart).
 const List<Categoria> categorias = [
   Categoria(id: 'animais', nome: 'Animais', icone: '🐶'),
   Categoria(id: 'dinossauros', nome: 'Dinossauros', icone: '🦕'),
@@ -20,38 +24,3 @@ const List<Categoria> categorias = [
   Categoria(id: 'monster_truck', nome: 'Monster Truck', icone: '🚚', premium: true),
   Categoria(id: 'outros', nome: 'Outros', icone: '✨', premium: true),
 ];
-
-final List<Desenho> desenhosExemplo = [
-  const Desenho(
-    id: 'animal_01',
-    titulo: 'Cachorro Feliz',
-    categoria: 'animais',
-    caminhoArquivo: 'assets/categorias/animais/cachorro_feliz.pdf',
-    thumbnail: 'assets/categorias/animais/cachorro_feliz_thumb.png',
-  ),
-  const Desenho(
-    id: 'dino_01',
-    titulo: 'Tiranossauro',
-    categoria: 'dinossauros',
-    caminhoArquivo: 'assets/categorias/dinossauros/tiranossauro.pdf',
-    thumbnail: 'assets/categorias/dinossauros/tiranossauro_thumb.png',
-  ),
-  const Desenho(
-    id: 'veiculo_01',
-    titulo: 'Carro de Corrida',
-    categoria: 'veiculos',
-    caminhoArquivo: 'assets/categorias/veiculos/carro_corrida.pdf',
-    thumbnail: 'assets/categorias/veiculos/carro_corrida_thumb.png',
-  ),
-  const Desenho(
-    id: 'monstros_fofos_01',
-    titulo: 'Monstrinho Fofo',
-    categoria: 'monstros_fofos',
-    caminhoArquivo: 'assets/categorias/monstros_fofos/monstros_fofos_01.pdf',
-    thumbnail: 'assets/categorias/monstros_fofos/monstros_fofos_01_thumb.png',
-  ),
-];
-
-List<Desenho> desenhosPorCategoria(String categoriaId) {
-  return desenhosExemplo.where((d) => d.categoria == categoriaId).toList();
-}
