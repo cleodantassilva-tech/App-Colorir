@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show rootBundle, AssetManifest;
 import '../models/desenho.dart';
 
 /// Detecta automaticamente os desenhos disponíveis em cada categoria,
@@ -12,20 +11,20 @@ import '../models/desenho.dart';
 ///   <id_categoria>_02_thumb.png
 ///   ...
 class AssetScanner {
-  static Map<String, dynamic>? _manifestCache;
+  static List<String>? _assetsCache;
 
-  static Future<Map<String, dynamic>> _carregarManifest() async {
-    if (_manifestCache != null) return _manifestCache!;
-    final conteudo = await rootBundle.loadString('AssetManifest.json');
-    _manifestCache = json.decode(conteudo) as Map<String, dynamic>;
-    return _manifestCache!;
+  static Future<List<String>> _carregarListaAssets() async {
+    if (_assetsCache != null) return _assetsCache!;
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    _assetsCache = manifest.listAssets();
+    return _assetsCache!;
   }
 
   static Future<List<Desenho>> listarPorCategoria(String categoriaId) async {
-    final manifest = await _carregarManifest();
+    final todosAssets = await _carregarListaAssets();
     final prefixo = 'assets/categorias/$categoriaId/';
 
-    final pdfs = manifest.keys
+    final pdfs = todosAssets
         .where((chave) => chave.startsWith(prefixo) && chave.endsWith('.pdf'))
         .toList()
       ..sort();
