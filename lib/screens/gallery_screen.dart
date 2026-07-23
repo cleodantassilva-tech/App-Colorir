@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/sample_data.dart';
 import '../models/desenho.dart';
+import '../services/asset_scanner.dart';
 import 'detail_screen.dart';
 
 class GalleryScreen extends StatelessWidget {
@@ -9,26 +9,36 @@ class GalleryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final desenhos = desenhosPorCategoria(categoria.id);
-
     return Scaffold(
       appBar: AppBar(title: Text(categoria.nome)),
-      body: desenhos.isEmpty
-          ? const Center(child: Text('Nenhum desenho nesta categoria ainda.'))
-          : GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 0.8,
-              ),
-              itemCount: desenhos.length,
-              itemBuilder: (context, index) {
-                final desenho = desenhos[index];
-                return _DesenhoThumbnail(desenho: desenho);
-              },
+      body: FutureBuilder<List<Desenho>>(
+        future: AssetScanner.listarPorCategoria(categoria.id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final desenhos = snapshot.data ?? [];
+          if (desenhos.isEmpty) {
+            return const Center(
+              child: Text('Nenhum desenho nesta categoria ainda.'),
+            );
+          }
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.8,
             ),
+            itemCount: desenhos.length,
+            itemBuilder: (context, index) {
+              final desenho = desenhos[index];
+              return _DesenhoThumbnail(desenho: desenho);
+            },
+          );
+        },
+      ),
     );
   }
 }
