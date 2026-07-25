@@ -1,18 +1,9 @@
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'dart:typed_data';
 
-/// Serviço responsável por enviar o desenho para impressão.
-///
-/// O pacote `printing` abre o diálogo NATIVO de impressão do Android,
-/// que já lista automaticamente impressoras conectadas via:
-///   - Wi-Fi (mesma rede)
-///   - Wi-Fi Direct
-///   - Bluetooth (se o plugin do fabricante estiver instalado, ex: Mopria, HP, Epson)
-///
-/// Não é necessário implementar nenhuma lógica de pareamento ou conexão:
-/// isso é responsabilidade do sistema operacional e do plugin de impressora.
 class PrintService {
-  /// Imprime um arquivo PDF a partir do caminho de asset informado.
   static Future<void> imprimirDesenho({
     required String caminhoAsset,
     required String nomeDocumento,
@@ -26,8 +17,31 @@ class PrintService {
     );
   }
 
-  /// Alternativa: gera uma prévia de impressão (útil para o botão
-  /// "Visualizar antes de imprimir").
+  /// Imprime uma imagem que está em memória (ex: gerada pela conversão
+  /// de foto para desenho), sem precisar que ela esteja nos assets do app.
+  static Future<void> imprimirImagem({
+    required Uint8List bytesImagem,
+    required String nomeDocumento,
+  }) async {
+    final documento = pw.Document();
+    final imagemPdf = pw.MemoryImage(bytesImagem);
+
+    documento.addPage(
+      pw.Page(
+        build: (context) => pw.Center(
+          child: pw.Image(imagemPdf, fit: pw.BoxFit.contain),
+        ),
+      ),
+    );
+
+    final dadosPdf = await documento.save();
+
+    await Printing.layoutPdf(
+      name: nomeDocumento,
+      onLayout: (format) async => dadosPdf,
+    );
+  }
+
   static Future<void> visualizarDesenho({
     required String caminhoAsset,
     required String nomeDocumento,
