@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/desenho.dart';
 import '../services/print_service.dart';
 import '../services/favorites_service.dart';
+import '../services/print_history_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final Desenho desenho;
@@ -14,16 +15,23 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   bool _imprimindo = false;
   bool _favorito = false;
+  bool _jaImpresso = false;
 
   @override
   void initState() {
     super.initState();
     _carregarFavorito();
+    _carregarHistorico();
   }
 
   Future<void> _carregarFavorito() async {
     final ehFav = await FavoritesService.ehFavorito(widget.desenho.id);
     if (mounted) setState(() => _favorito = ehFav);
+  }
+
+  Future<void> _carregarHistorico() async {
+    final impresso = await PrintHistoryService.foiImpresso(widget.desenho.id);
+    if (mounted) setState(() => _jaImpresso = impresso);
   }
 
   Future<void> _alternarFavorito() async {
@@ -38,6 +46,8 @@ class _DetailScreenState extends State<DetailScreen> {
         caminhoAsset: widget.desenho.caminhoArquivo,
         nomeDocumento: widget.desenho.titulo,
       );
+      await PrintHistoryService.marcarComoImpresso(widget.desenho.id);
+      await _carregarHistorico();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -55,6 +65,11 @@ class _DetailScreenState extends State<DetailScreen> {
       appBar: AppBar(
         title: Text(widget.desenho.titulo),
         actions: [
+          if (_jaImpresso)
+            const Padding(
+              padding: EdgeInsets.only(right: 4),
+              child: Icon(Icons.check_circle, color: Colors.green),
+            ),
           IconButton(
             icon: Icon(_favorito ? Icons.favorite : Icons.favorite_border),
             color: _favorito ? Colors.red : null,
@@ -80,6 +95,14 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
             ),
           ),
+          if (_jaImpresso)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Você já imprimiu este desenho',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
