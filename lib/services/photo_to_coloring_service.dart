@@ -11,18 +11,26 @@ class PhotoToColoringService {
       throw Exception('Não foi possível ler essa imagem.');
     }
 
-    const larguraMaxima = 1200;
+    const larguraMaxima = 1000;
     final imagemRedimensionada = imagemOriginal.width > larguraMaxima
         ? img.copyResize(imagemOriginal, width: larguraMaxima)
         : imagemOriginal;
 
     final cinza = img.grayscale(imagemRedimensionada);
-    final bordas = img.sobel(cinza);
+
+    // Suaviza ANTES de detectar bordas, para reduzir ruído/textura
+    // (grama, tecido, cascalho) e deixar os traços mais limpos.
+    final suavizada = img.gaussianBlur(cinza, radius: 3);
+
+    final bordas = img.sobel(suavizada);
     final invertida = img.invert(bordas);
-    final resultado = img.adjustColor(
+
+    // Mantém só as bordas mais fortes como linhas pretas,
+    // eliminando o ruído fraco de fundo.
+    final resultado = img.luminanceThreshold(
       invertida,
-      contrast: 1.6,
-      brightness: 1.05,
+      threshold: 0.82,
+      outputColor: true,
     );
 
     return Uint8List.fromList(img.encodePng(resultado));
