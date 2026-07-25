@@ -4,6 +4,7 @@ import '../models/desenho.dart';
 import '../services/purchase_service.dart';
 import 'favorites_screen.dart';
 import 'gallery_screen.dart';
+import 'photo_to_coloring_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -84,9 +85,27 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.auto_fix_high),
+                label: const Text('Transformar foto em desenho'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PhotoToColoringScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
           if (!_desbloqueado)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
