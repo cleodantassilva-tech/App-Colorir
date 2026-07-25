@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../data/sample_data.dart';
 import '../models/desenho.dart';
+import '../services/asset_scanner.dart';
+import '../services/featured_service.dart';
 import '../services/purchase_service.dart';
 import 'favorites_screen.dart';
 import 'gallery_screen.dart';
+import 'detail_screen.dart';
 import 'photo_to_coloring_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,10 +18,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _desbloqueado = false;
+  bool _sorteando = false;
+  late final String? _categoriaGratisMes;
 
   @override
   void initState() {
     super.initState();
+    _categoriaGratisMes = FeaturedService.categoriaGratisDoMes();
     _carregarStatus();
   }
 
@@ -53,8 +59,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  bool _categoriaEstaLiberada(Categoria categoria) {
+    if (!categoria.premium) return true;
+    if (_desbloqueado) return true;
+    if (categoria.id == _categoriaGratisMes) return true;
+    return false;
+  }
+
   void _abrirCategoria(Categoria categoria) {
-    if (categoria.premium && !_desbloqueado) {
+    if (!_categoriaEstaLiberada(categoria)) {
       _mostrarDialogoDesbloqueio();
       return;
     }
@@ -64,13 +77,59 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> _surpreendaMe() async {
+    setState(() => _sorteando = true);
+    try {
+      final idsLiberados =
+          categorias.where(_categoriaEstaLiberada).map((c) => c.id).toList();
+
+      final todos = await AssetScanner.listarTodos(idsLiberados);
+
+      if (!mounted) return;
+
+      if (todos.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Ainda não há desenhos disponíveis para sortear.'),
+          ),
+        );
+        return;
+      }
+
+      todos.shuffle();
+      final escolhido = todos.first;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => DetailScreen(desenho: escolhido)),
+      );
+    } finally {
+      if (mounted) setState(() => _sorteando = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final nomeCategoriaGratis = _categoriaGratisMes == null
+        ? null
+        : categorias.firstWhere((c) => c.id == _categoriaGratisMes).nome;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Desenhos para Colorir'),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: _sorteando
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.shuffle),
+            tooltip: 'Surpreenda-me',
+            onPressed: _sorteando ? null : _surpreendaMe,
+          ),
           IconButton(
             icon: const Icon(Icons.favorite),
             tooltip: 'Favoritos',
@@ -85,6 +144,29 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
+          if (nomeCategoriaGratis != null && !_desbloqueado)
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.card_giftcard, color: Colors.green),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Grátis este mês: $nomeCategoriaGratis!',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: SizedBox(
@@ -129,14 +211,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     spacing: spacing,
                     runSpacing: spacing,
                     children: categorias.map((categoria) {
-                      final bloqueada =
-                          categoria.premium && !_desbloqueado;
+                      final liberada = _categoriaEstaLiberada(categoria);
+                      final gratisEsteMes = categoria.id == _categoriaGratisMes &&
+                          !_desbloqueado;
                       return SizedBox(
                         width: cardWidth,
                         height: cardHeight,
                         child: _CategoriaCard(
                           categoria: categoria,
-                          bloqueada: bloqueada,
+                          bloqueada: !liberada,
+                          gratisEsteMes: gratisEsteMes,
                           onTap: () => _abrirCategoria(categoria),
                         ),
                       );
@@ -155,11 +239,13 @@ class _HomeScreenState extends State<HomeScreen> {
 class _CategoriaCard extends StatelessWidget {
   final Categoria categoria;
   final bool bloqueada;
+  final bool gratisEsteMes;
   final VoidCallback onTap;
 
   const _CategoriaCard({
     required this.categoria,
     required this.bloqueada,
+    required this.gratisEsteMes,
     required this.onTap,
   });
 
@@ -220,6 +306,29 @@ class _CategoriaCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                ),
+              )
+            else if (gratisEsteMes)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Grátis',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
