@@ -18,6 +18,15 @@ class _GalleryScreenState extends State<GalleryScreen> {
   bool _modoSelecao = false;
   final Set<String> _selecionados = {};
   bool _imprimindoVarios = false;
+  late Future<List<Desenho>> _desenhosFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicia a busca dos desenhos apenas uma vez ao abrir a tela
+    // Isso impede que o teclado feche a cada letra digitada na barra de pesquisa
+    _desenhosFuture = AssetScanner.listarPorCategoria(widget.categoria.id);
+  }
 
   void _alternarModoSelecao() {
     setState(() {
@@ -76,7 +85,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         ],
       ),
       body: FutureBuilder<List<Desenho>>(
-        future: AssetScanner.listarPorCategoria(widget.categoria.id),
+        future: _desenhosFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
@@ -91,21 +100,20 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
           return Column(
             children: [
-              if (todos.length > 6)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Buscar desenho...',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      isDense: true,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Buscar desenho...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    onChanged: (valor) => setState(() => _busca = valor),
+                    isDense: true,
                   ),
+                  onChanged: (valor) => setState(() => _busca = valor),
                 ),
+              ),
               Expanded(
                 child: filtrados.isEmpty
                     ? const Center(child: Text('Nenhum desenho encontrado.'))
