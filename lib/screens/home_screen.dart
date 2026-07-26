@@ -128,17 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: _sorteando
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.shuffle),
-            tooltip: 'Surpreenda-me',
-            onPressed: _sorteando ? null : _surpreendaMe,
-          ),
-          IconButton(
             icon: const Icon(Icons.favorite),
             tooltip: 'Favoritos',
             onPressed: () {
@@ -205,6 +194,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+          
+          // NOVO BOTÃO SURPREENDA-ME GIGANTE
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 56),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  backgroundColor: Colors.deepOrange.shade50,
+                  foregroundColor: Colors.deepOrange,
+                  elevation: 0,
+                  side: BorderSide(color: Colors.deepOrange.shade200, width: 1),
+                ),
+                icon: _sorteando
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.deepOrange,
+                        ),
+                      )
+                    : const Icon(Icons.shuffle, size: 26),
+                label: Text(
+                  _sorteando ? 'Sorteando...' : 'Surpreenda-me!',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                onPressed: _sorteando ? null : _surpreendaMe,
+              ),
+            ),
+          ),
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
