@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 import '../models/desenho.dart';
 import '../services/print_service.dart';
 import '../services/favorites_service.dart';
 import '../services/print_history_service.dart';
+import '../widgets/paper_size_dialog.dart';
 
 class DetailScreen extends StatefulWidget {
   final Desenho desenho;
@@ -39,15 +41,30 @@ class _DetailScreenState extends State<DetailScreen> {
     await _carregarFavorito();
   }
 
+  Future<void> _talvezPedirAvaliacao() async {
+    final impressos = await PrintHistoryService.obterImpressos();
+    if (impressos.length == 3 || impressos.length == 10) {
+      final inAppReview = InAppReview.instance;
+      if (await inAppReview.isAvailable()) {
+        await inAppReview.requestReview();
+      }
+    }
+  }
+
   Future<void> _imprimir() async {
+    final formato = await escolherTamanhoPapel(context);
+    if (formato == null) return;
+
     setState(() => _imprimindo = true);
     try {
       await PrintService.imprimirDesenho(
         caminhoAsset: widget.desenho.caminhoArquivo,
         nomeDocumento: widget.desenho.titulo,
+        formato: formato,
       );
       await PrintHistoryService.marcarComoImpresso(widget.desenho.id);
       await _carregarHistorico();
+      await _talvezPedirAvaliacao();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
