@@ -39,12 +39,20 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Desbloquear tudo'),
         content: const Text(
-          'Libere todas as categorias premium com uma única compra.',
+          'Escolha como liberar todas as categorias premium.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await PurchaseService.ativarAssinatura();
+              if (context.mounted) Navigator.pop(context);
+              await _carregarStatus();
+            },
+            child: const Text('Assinar'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -52,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
               if (context.mounted) Navigator.pop(context);
               await _carregarStatus();
             },
-            child: const Text('Desbloquear'),
+            child: const Text('Compra única'),
           ),
         ],
       ),
@@ -212,8 +220,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     runSpacing: spacing,
                     children: categorias.map((categoria) {
                       final liberada = _categoriaEstaLiberada(categoria);
-                      final gratisEsteMes = categoria.id == _categoriaGratisMes &&
-                          !_desbloqueado;
+                      final gratisEsteMes =
+                          categoria.id == _categoriaGratisMes &&
+                              !_desbloqueado;
                       return SizedBox(
                         width: cardWidth,
                         height: cardHeight,
