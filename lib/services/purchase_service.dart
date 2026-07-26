@@ -1,21 +1,33 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Controla se o usuário já desbloqueou todas as categorias premium.
-///
-/// Por enquanto, o desbloqueio é salvo localmente (sem cobrança real).
-/// Quando você integrar um sistema de pagamento de verdade
-/// (ex: in_app_purchase), troque `desbloquearTudo()` para só
-/// salvar `true` depois que a compra for confirmada pela loja.
 class PurchaseService {
-  static const _chave = 'desbloqueado_tudo';
+  static const _chaveCompraUnica = 'desbloqueado_tudo';
+  static const _chaveAssinatura = 'assinatura_ativa';
 
   static Future<bool> estaDesbloqueado() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_chave) ?? false;
+    final compraUnica = prefs.getBool(_chaveCompraUnica) ?? false;
+    final assinatura = prefs.getBool(_chaveAssinatura) ?? false;
+    return compraUnica || assinatura;
   }
 
   static Future<void> desbloquearTudo() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_chave, true);
+    await prefs.setBool(_chaveCompraUnica, true);
+  }
+
+  static Future<bool> assinaturaAtiva() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_chaveAssinatura) ?? false;
+  }
+
+  static Future<void> ativarAssinatura() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_chaveAssinatura, true);
+  }
+
+  static Future<void> cancelarAssinatura() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_chaveAssinatura, false);
   }
 }
