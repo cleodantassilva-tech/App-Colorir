@@ -15,23 +15,29 @@ class PhotoToColoringService {
         ? img.copyResize(imagemOriginal, width: larguraMaxima)
         : imagemOriginal;
 
+    // 1. Força tons de cinza logo no início
     final cinza = img.grayscale(imagemRedimensionada);
 
-    // Reduzimos o desfoque (de 12 para 5). 
-    // Assim o fundo perde a textura fina, mas o rosto e o corpo são preservados.
-    final suavizada = img.gaussianBlur(cinza, radius: 5);
+    // 2. Desfoque bem mais leve (Raio 2)
+    // Isso evita que os traços fiquem grossos demais e salva os detalhes do rosto
+    final suavizada = img.gaussianBlur(cinza, radius: 2);
 
+    // 3. Detecta as bordas (agora mais finas)
     final bordas = img.sobel(suavizada);
+    
+    // 4. Inverte as cores (fundo vira branco, traços viram pretos)
     final invertida = img.invert(bordas);
 
-    // Reduzimos o limiar (de 0.85 para 0.78).
-    // Isso ajuda a recuperar as linhas médias que tinham sido apagadas.
+    // 5. Threshold calibrado para traços mais finos
     final resultado = img.luminanceThreshold(
       invertida,
-      threshold: 0.78,
-      outputColor: true,
+      threshold: 0.80, // Ajuste fino para não engrossar as linhas
     );
 
-    return Uint8List.fromList(img.encodePng(resultado));
+    // 6. GARANTIA: Aplica tons de cinza NOVAMENTE no final 
+    // Isso mata completamente qualquer mancha azul ou colorida que tenha sobrado
+    final resultadoFinal = img.grayscale(resultado);
+
+    return Uint8List.fromList(img.encodePng(resultadoFinal));
   }
 }
