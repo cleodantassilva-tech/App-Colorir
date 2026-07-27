@@ -5,7 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class PrintService {
-  // 1. Função nova para imprimir foto convertida com o nome da criança
+  // 1. A NOSSA FUNÇÃO NOVA: Para a foto convertida com o nome da criança
   static Future<void> imprimirImagem({
     required Uint8List bytesImagem,
     required String nomeDocumento,
@@ -49,18 +49,51 @@ class PrintService {
     );
   }
 
-  // 2. Corrigido para aceitar o parâmetro nomeado (caminhoAsset: ...)
-  static Future<void> imprimirDesenho({String? caminhoAsset}) async {
+  // 2. FUNÇÃO DETAIL SCREEN: Adaptada exatamente para os parâmetros enviados
+  static Future<void> imprimirDesenho({
+    required String caminhoAsset,
+    required String nomeDocumento,
+    required PdfPageFormat formato,
+  }) async {
     final pdf = pw.Document();
     
-    if (caminhoAsset != null && caminhoAsset.isNotEmpty) {
-      final ByteData imageBytes = await rootBundle.load(caminhoAsset);
+    final ByteData imageBytes = await rootBundle.load(caminhoAsset);
+    final Uint8List imageData = imageBytes.buffer.asUint8List();
+    final image = pw.MemoryImage(imageData);
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: formato,
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Image(image, fit: pw.BoxFit.contain),
+          );
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat f) async => pdf.save(),
+      name: nomeDocumento,
+    );
+  }
+
+  // 3. FUNÇÃO GALLERY SCREEN: Adaptada exatamente para receber a lista e o formato
+  static Future<void> imprimirVarios({
+    required List<String> caminhosAssets,
+    required String nomeDocumento,
+    required PdfPageFormat formato,
+  }) async {
+    final pdf = pw.Document();
+
+    for (var caminho in caminhosAssets) {
+      final ByteData imageBytes = await rootBundle.load(caminho);
       final Uint8List imageData = imageBytes.buffer.asUint8List();
       final image = pw.MemoryImage(imageData);
 
       pdf.addPage(
         pw.Page(
-          pageFormat: PdfPageFormat.a4,
+          pageFormat: formato,
           build: (pw.Context context) {
             return pw.Center(
               child: pw.Image(image, fit: pw.BoxFit.contain),
@@ -71,49 +104,8 @@ class PrintService {
     }
 
     await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-      name: 'Desenho_para_Colorir',
-    );
-  }
-
-  // 3. Corrigido para tornar o argumento opcional, evitando o erro de "0 given"
-  static Future<void> imprimirVarios([List<String>? caminhosAssets]) async {
-    final pdf = pw.Document();
-
-    if (caminhosAssets != null && caminhosAssets.isNotEmpty) {
-      for (var caminho in caminhosAssets) {
-        final ByteData imageBytes = await rootBundle.load(caminho);
-        final Uint8List imageData = imageBytes.buffer.asUint8List();
-        final image = pw.MemoryImage(imageData);
-
-        pdf.addPage(
-          pw.Page(
-            pageFormat: PdfPageFormat.a4,
-            build: (pw.Context context) {
-              return pw.Center(
-                child: pw.Image(image, fit: pw.BoxFit.contain),
-              );
-            },
-          ),
-        );
-      }
-    } else {
-      // Página de segurança caso a galeria chame a função vazia
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context context) {
-            return pw.Center(
-              child: pw.Text("Nenhum desenho recebido para impressao."),
-            );
-          },
-        ),
-      );
-    }
-
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-      name: 'Desenhos_Colorir',
+      onLayout: (PdfPageFormat f) async => pdf.save(),
+      name: nomeDocumento,
     );
   }
 }
