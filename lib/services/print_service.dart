@@ -5,11 +5,11 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class PrintService {
-  // 1. A NOSSA FUNÇÃO NOVA (Exatamente como você mandou, com o nome da criança)
+  // 1. Função para imprimir foto convertida com o nome da criança no topo
   static Future<void> imprimirImagem({
     required Uint8List bytesImagem,
     required String nomeDocumento,
-    String? nomeCrianca, 
+    String? nomeCrianca,
   }) async {
     final pdf = pw.Document();
     final image = pw.MemoryImage(bytesImagem);
@@ -32,7 +32,6 @@ class PrintService {
                     ),
                   ),
                 ),
-                
               pw.Expanded(
                 child: pw.Center(
                   child: pw.Image(image, fit: pw.BoxFit.contain),
@@ -50,28 +49,57 @@ class PrintService {
     );
   }
 
-  // 2. A FUNÇÃO ANTIGA RESTAURADA (Para o app parar de dar erro e compilar)
-  static Future<void> imprimirDesenho(String caminhoAsset) async {
+  // 2. Função para imprimir um desenho da galeria (com suporte a argumento opcional para evitar erros)
+  static Future<void> imprimirDesenho([String? caminhoAsset]) async {
     final pdf = pw.Document();
     
-    final ByteData imageBytes = await rootBundle.load(caminhoAsset);
-    final Uint8List imageData = imageBytes.buffer.asUint8List();
-    final image = pw.MemoryImage(imageData);
+    if (caminhoAsset != null && caminhoAsset.isNotEmpty) {
+      final ByteData imageBytes = await rootBundle.load(caminhoAsset);
+      final Uint8List imageData = imageBytes.buffer.asUint8List();
+      final image = pw.MemoryImage(imageData);
 
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Image(image, fit: pw.BoxFit.contain),
-          );
-        },
-      ),
-    );
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) {
+            return pw.Center(
+              child: pw.Image(image, fit: pw.BoxFit.contain),
+            );
+          },
+        ),
+      );
+    }
 
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
       name: 'Desenho_para_Colorir',
+    );
+  }
+
+  // 3. Função restaurada para imprimir vários desenhos (chamada pela galeria)
+  static Future<void> imprimirVarios(List<String> caminhosAssets) async {
+    final pdf = pw.Document();
+
+    for (var caminho in caminhosAssets) {
+      final ByteData imageBytes = await rootBundle.load(caminho);
+      final Uint8List imageData = imageBytes.buffer.asUint8List();
+      final image = pw.MemoryImage(imageData);
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) {
+            return pw.Center(
+              child: pw.Image(image, fit: pw.BoxFit.contain),
+            );
+          },
+        ),
+      );
+    }
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+      name: 'Desenhos_Colorir',
     );
   }
 }
