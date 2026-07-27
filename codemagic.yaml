@@ -10,10 +10,10 @@ workflows:
       - name: Atualizar versao do Kotlin
         script: |
           if [ -f "android/settings.gradle" ]; then
-            sed -i 's/id "org.jetbrains.kotlin.android" version .*/id "org.jetbrains.kotlin.android" version "1.9.24" apply false/' android/settings.gradle
+            perl -pi -e 's/id "org\.jetbrains\.kotlin\.android" version "[^"]+"/id "org.jetbrains.kotlin.android" version "1.9.24"/g' android/settings.gradle
           fi
           if [ -f "android/build.gradle" ]; then
-            sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '1.9.24'/" android/build.gradle
+            perl -pi -e "s/ext\.kotlin_version = .*/ext.kotlin_version = '1.9.24'/g" android/build.gradle
           fi
       - name: Instalar dependencias
         script: flutter pub get
