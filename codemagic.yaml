@@ -3,12 +3,17 @@ workflows:
     name: Android Workflow
     max_build_duration: 60
     environment:
-      flutter: 3.19.6
+      flutter: stable
+      java: 17
     scripts:
       - name: Gerar plataforma Android
         script: flutter create --platforms=android .
-      - name: Instalar dependencias
-        script: flutter pub get
+      - name: Ajustar dependencias legadas
+        script: echo "ext.kotlin_version = '1.9.24'" >> android/build.gradle
+      - name: Atualizar pacotes e corrigir bugs
+        script: |
+          flutter pub get
+          flutter pub upgrade
       - name: Gerar icone do app
         script: dart run flutter_launcher_icons
       - name: Build APK
