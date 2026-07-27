@@ -5,7 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class PrintService {
-  // 1. Função para imprimir foto convertida com o nome da criança no topo
+  // 1. Função nova para imprimir foto convertida com o nome da criança
   static Future<void> imprimirImagem({
     required Uint8List bytesImagem,
     required String nomeDocumento,
@@ -49,8 +49,8 @@ class PrintService {
     );
   }
 
-  // 2. Função para imprimir um desenho da galeria (com suporte a argumento opcional para evitar erros)
-  static Future<void> imprimirDesenho([String? caminhoAsset]) async {
+  // 2. Corrigido para aceitar o parâmetro nomeado (caminhoAsset: ...)
+  static Future<void> imprimirDesenho({String? caminhoAsset}) async {
     final pdf = pw.Document();
     
     if (caminhoAsset != null && caminhoAsset.isNotEmpty) {
@@ -76,21 +76,35 @@ class PrintService {
     );
   }
 
-  // 3. Função restaurada para imprimir vários desenhos (chamada pela galeria)
-  static Future<void> imprimirVarios(List<String> caminhosAssets) async {
+  // 3. Corrigido para tornar o argumento opcional, evitando o erro de "0 given"
+  static Future<void> imprimirVarios([List<String>? caminhosAssets]) async {
     final pdf = pw.Document();
 
-    for (var caminho in caminhosAssets) {
-      final ByteData imageBytes = await rootBundle.load(caminho);
-      final Uint8List imageData = imageBytes.buffer.asUint8List();
-      final image = pw.MemoryImage(imageData);
+    if (caminhosAssets != null && caminhosAssets.isNotEmpty) {
+      for (var caminho in caminhosAssets) {
+        final ByteData imageBytes = await rootBundle.load(caminho);
+        final Uint8List imageData = imageBytes.buffer.asUint8List();
+        final image = pw.MemoryImage(imageData);
 
+        pdf.addPage(
+          pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            build: (pw.Context context) {
+              return pw.Center(
+                child: pw.Image(image, fit: pw.BoxFit.contain),
+              );
+            },
+          ),
+        );
+      }
+    } else {
+      // Página de segurança caso a galeria chame a função vazia
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
           build: (pw.Context context) {
             return pw.Center(
-              child: pw.Image(image, fit: pw.BoxFit.contain),
+              child: pw.Text("Nenhum desenho recebido para impressao."),
             );
           },
         ),
