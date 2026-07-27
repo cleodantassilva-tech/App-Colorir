@@ -1,5 +1,5 @@
 name: app_colorir
-description: App de desenhos para imprimir e colorir, com impressão direta via Bluetooth/Wi-Fi.
+description: App para converter fotos e imprimir desenhos para colorir.
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,42 +9,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  printing: ^5.13.0
-  pdf: ^3.11.0
-  shared_preferences: ^2.3.2
-  path_provider: ^2.1.4
   image_picker: ^1.1.2
   image: ^4.2.0
-  in_app_review: ^2.0.9
+  pdf: ^3.10.8
+  printing: 5.12.0 # Versão fixa e estável sem dependências problemáticas de JNI
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.13.1
-
-flutter_icons:
-  android: true
-  ios: false
-  image_path: "assets/icon/icone_app_colorir.png"
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/categorias/animais/
-    - assets/categorias/dinossauros/
-    - assets/categorias/veiculos/
-    - assets/categorias/datas_comemorativas/
-    - assets/categorias/princesas/
-    - assets/categorias/unicornio/
-    - assets/categorias/gatinhos/
-    - assets/categorias/pandinhas/
-    - assets/categorias/cristao/
-    - assets/categorias/animais_bosque/
-    - assets/categorias/doces_fofos/
-    - assets/categorias/cactus/
-    - assets/categorias/raposinha/
-    - assets/categorias/monstros_fofos/
-    - assets/categorias/jardim/
-    - assets/categorias/dragao/
-    - assets/categorias/monster_truck/
-    - assets/categorias/outros/
