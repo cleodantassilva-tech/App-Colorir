@@ -3,33 +3,10 @@ workflows:
     name: Android Workflow
     max_build_duration: 60
     environment:
-      flutter: stable
+      flutter: 3.19.6
     scripts:
       - name: Gerar plataforma Android
         script: flutter create --platforms=android .
-      - name: Atualizar versao do Kotlin
-        script: |
-          python3 -c "
-          import os, re
-          def update_gradle(path):
-              if not os.path.exists(path):
-                  return
-              with open(path, 'r') as f:
-                  text = f.read()
-              # Substitui no formato novo (.kts)
-              text = re.sub(r'id\s*\(\s*[\'\"]org\.jetbrains\.kotlin\.android[\'\"]\s*\)\s*version\s*[\'\"].*?[\'\"]', 'id(\"org.jetbrains.kotlin.android\") version \"1.9.24\"', text)
-              # Substitui no formato antigo (.gradle)
-              text = re.sub(r'id\s+[\'\"]org\.jetbrains\.kotlin\.android[\'\"]\s+version\s+[\'\"].*?[\'\"]', 'id \'org.jetbrains.kotlin.android\' version \'1.9.24\'', text)
-              # Substitui no build.gradle antigo
-              text = re.sub(r'ext\.kotlin_version\s*=\s*[\'\"].*?[\'\"]', 'ext.kotlin_version = \'1.9.24\'', text)
-              with open(path, 'w') as f:
-                  f.write(text)
-          
-          update_gradle('android/settings.gradle')
-          update_gradle('android/settings.gradle.kts')
-          update_gradle('android/build.gradle')
-          update_gradle('android/build.gradle.kts')
-          "
       - name: Instalar dependencias
         script: flutter pub get
       - name: Gerar icone do app
