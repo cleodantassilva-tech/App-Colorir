@@ -4,18 +4,25 @@ workflows:
     max_build_duration: 60
     environment:
       flutter: stable
+      java: 17
     scripts:
       - name: Gerar plataforma Android
         script: flutter create --platforms=android .
-      - name: Ajustar compileSdk
-        script: |
-          if [ -f android/app/build.gradle.kts ]; then
-            sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/g' android/app/build.gradle.kts
-          elif [ -f android/app/build.gradle ]; then
-            sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 36/g' android/app/build.gradle
-          fi
       - name: Instalar dependencias
         script: flutter pub get
+      - name: Ajustar Versao do Android
+        script: |
+          python3 -c "
+          import os
+          arquivos = ['android/app/build.gradle', 'android/app/build.gradle.kts']
+          for f in arquivos:
+              if os.path.exists(f):
+                  texto = open(f, 'r').read()
+                  texto = texto.replace('flutter.compileSdkVersion', '36')
+                  texto = texto.replace('compileSdk = flutter.compileSdkVersion', 'compileSdk = 36')
+                  texto = texto.replace('flutter.targetSdkVersion', '36')
+                  open(f, 'w').write(texto)
+          "
       - name: Gerar icone do app
         script: dart run flutter_launcher_icons
       - name: Build APK
