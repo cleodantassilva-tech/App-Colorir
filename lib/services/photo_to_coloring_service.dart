@@ -11,6 +11,7 @@ class PhotoToColoringService {
       throw Exception('Não foi possível ler essa imagem.');
     }
 
+    // Mantém a sua excelente trava de segurança para não travar o celular
     const larguraMaxima = 1000;
     final imagemRedimensionada = imagemOriginal.width > larguraMaxima
         ? img.copyResize(imagemOriginal, width: larguraMaxima)
@@ -18,18 +19,18 @@ class PhotoToColoringService {
 
     final cinza = img.grayscale(imagemRedimensionada);
 
-    // Suaviza ANTES de detectar bordas, para reduzir ruído/textura
-    // (grama, tecido, cascalho) e deixar os traços mais limpos.
-    final suavizada = img.gaussianBlur(cinza, radius: 3);
+    // NOVA MATEMÁTICA: Desfoque agressivo (Raio 12)
+    // Isso "embaça" texturas como asfalto, prédios e sujeiras antes de procurar as linhas.
+    final suavizada = img.gaussianBlur(cinza, radius: 12);
 
     final bordas = img.sobel(suavizada);
     final invertida = img.invert(bordas);
 
-    // Mantém só as bordas mais fortes como linhas pretas,
-    // eliminando o ruído fraco de fundo.
+    // NOVA MATEMÁTICA: Threshold mais rigoroso (0.85)
+    // Força qualquer cinza claro a virar branco puro e foca só nos contornos reais.
     final resultado = img.luminanceThreshold(
       invertida,
-      threshold: 0.82,
+      threshold: 0.85,
       outputColor: true,
     );
 
