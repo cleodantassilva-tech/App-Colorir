@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: cardWidth,
                         height: cardHeight,
                         child: _GridItemCard(
-                          icone: const Text('🏆', style: TextStyle(fontSize: 48)),
+                          icone: const Text('🏅', style: TextStyle(fontSize: 48)),
                           titulo: 'Certificado\nde Artista',
                           showPremiumBadge: !_desbloqueado, 
                           showFreeBadge: false,
