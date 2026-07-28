@@ -8,6 +8,7 @@ import 'favorites_screen.dart';
 import 'gallery_screen.dart';
 import 'detail_screen.dart';
 import 'photo_to_coloring_screen.dart';
+import 'certificate_screen.dart'; // IMPORTAÇÃO DA TELA NOVA
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -195,7 +196,34 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           
-          // NOVO BOTÃO SURPREENDA-ME GIGANTE
+          // NOVO BOTÃO DE CERTIFICADO
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber.shade400,
+                  foregroundColor: Colors.brown.shade900,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+                icon: const Icon(Icons.emoji_events, size: 24),
+                label: const Text(
+                  'Emitir Certificado de Artista',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CertificateScreen()),
+                  );
+                },
+              ),
+            ),
+          ),
+          
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: SizedBox(
