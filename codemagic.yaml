@@ -16,6 +16,8 @@ workflows:
           fi
       - name: Instalar dependencias
         script: flutter pub get
+      - name: Gerar icone do app
+        script: dart run flutter_launcher_icons -f pubspec.yaml
       - name: Build APK
         script: flutter build apk --release
     artifacts:
