@@ -10,19 +10,19 @@ dependencies:
   flutter:
     sdk: flutter
   
-  # Usando "any" para forçar as versões mais recentes (compatíveis com Android 33/36)
-  printing: any
-  pdf: any
-  shared_preferences: any
-  path_provider: any
-  image_picker: any
-  image: any
-  in_app_review: any
+  # Versoes cravadas: seguras, testadas e compativeis com Android novo (sem quebrar o Kotlin)
+  printing: ^5.11.1
+  pdf: ^3.10.8
+  shared_preferences: ^2.2.3
+  path_provider: ^2.1.3
+  image_picker: ^1.1.2
+  image: ^4.1.7
+  in_app_review: ^2.0.9
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: any
+  flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
   android: "launcher_icon"
