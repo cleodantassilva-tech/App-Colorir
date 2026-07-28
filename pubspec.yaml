@@ -1,26 +1,53 @@
 name: app_colorir
-description: App para converter fotos e imprimir desenhos para colorir.
+description: App Flutter (Android) de desenhos para imprimir e colorir.
 publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  image_picker: ^1.1.2
-  image: ^4.2.0
-  pdf: ^3.10.8
-  printing: 5.12.0
-  shared_preferences: ^2.2.2
+  
+  # Usando "any" para forçar as versões mais recentes (compatíveis com Android 33/36)
+  printing: any
+  pdf: any
+  shared_preferences: any
+  path_provider: any
+  image_picker: any
+  image: any
   in_app_review: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: any
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "assets/icon/icone_app_colorir.png"
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/icon/
+    - assets/categorias/animais/
+    - assets/categorias/dinossauros/
+    - assets/categorias/veiculos/
+    - assets/categorias/datas_comemorativas/
+    - assets/categorias/princesas/
+    - assets/categorias/unicornio/
+    - assets/categorias/gatinhos/
+    - assets/categorias/pandinhas/
+    - assets/categorias/cristao/
+    - assets/categorias/animais_bosque/
+    - assets/categorias/doces_fofos/
+    - assets/categorias/cactus/
+    - assets/categorias/raposinha/
+    - assets/categorias/monstros_fofos/
+    - assets/categorias/jardim/
+    - assets/categorias/dragao/
+    - assets/categorias/monster_truck/
+    - assets/categorias/outros/
