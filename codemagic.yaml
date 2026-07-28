@@ -23,8 +23,6 @@ workflows:
                   texto = texto.replace('flutter.targetSdkVersion', '36')
                   open(f, 'w').write(texto)
           "
-      - name: Gerar icone do app
-        script: dart run flutter_launcher_icons
       - name: Build APK
         script: flutter build apk --release
     artifacts:
