@@ -8,7 +8,7 @@ import 'favorites_screen.dart';
 import 'gallery_screen.dart';
 import 'detail_screen.dart';
 import 'photo_to_coloring_screen.dart';
-import 'certificate_screen.dart'; // IMPORTAÇÃO DA TELA NOVA
+import 'certificate_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Desbloquear tudo'),
         content: const Text(
-          'Escolha como liberar todas as categorias premium.',
+          'Escolha como liberar todas as categorias premium e recursos exclusivos.',
         ),
         actions: [
           TextButton(
@@ -142,6 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
+          // AVISO GRÁTIS
           if (nomeCategoriaGratis != null && !_desbloqueado)
             Container(
               width: double.infinity,
@@ -165,6 +166,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+            
+          // BOTÃO FOTO EM DESENHO
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: SizedBox(
@@ -183,6 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          
+          // BOTÃO DESBLOQUEAR TUDO
           if (!_desbloqueado)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -195,67 +200,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          
-          // NOVO BOTÃO DE CERTIFICADO
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber.shade400,
-                  foregroundColor: Colors.brown.shade900,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 0,
-                ),
-                icon: const Icon(Icons.emoji_events, size: 24),
-                label: const Text(
-                  'Emitir Certificado de Artista',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CertificateScreen()),
-                  );
-                },
-              ),
-            ),
-          ),
-          
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 56),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  backgroundColor: Colors.deepOrange.shade50,
-                  foregroundColor: Colors.deepOrange,
-                  elevation: 0,
-                  side: BorderSide(color: Colors.deepOrange.shade200, width: 1),
-                ),
-                icon: _sorteando
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.deepOrange,
-                        ),
-                      )
-                    : const Icon(Icons.shuffle, size: 26),
-                label: Text(
-                  _sorteando ? 'Sorteando...' : 'Surpreenda-me!',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                onPressed: _sorteando ? null : _surpreendaMe,
-              ),
-            ),
-          ),
 
+          // GRID MÓVEL
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -269,22 +215,76 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: WrapAlignment.center,
                     spacing: spacing,
                     runSpacing: spacing,
-                    children: categorias.map((categoria) {
-                      final liberada = _categoriaEstaLiberada(categoria);
-                      final gratisEsteMes =
-                          categoria.id == _categoriaGratisMes &&
-                              !_desbloqueado;
-                      return SizedBox(
+                    children: [
+                      
+                      // 1. CARD SURPREENDA-ME
+                      SizedBox(
                         width: cardWidth,
                         height: cardHeight,
-                        child: _CategoriaCard(
-                          categoria: categoria,
-                          bloqueada: !liberada,
-                          gratisEsteMes: gratisEsteMes,
-                          onTap: () => _abrirCategoria(categoria),
+                        child: _GridItemCard(
+                          icone: _sorteando
+                              ? const SizedBox(
+                                  width: 48,
+                                  height: 48,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 3,
+                                      color: Colors.deepOrange,
+                                    ),
+                                  ),
+                                )
+                              : const Text('🎲', style: TextStyle(fontSize: 48)),
+                          titulo: 'Surpreenda-me',
+                          showPremiumBadge: false,
+                          showFreeBadge: false,
+                          onTap: _sorteando ? () {} : _surpreendaMe,
                         ),
-                      );
-                    }).toList(),
+                      ),
+
+                      // 2. CARD CERTIFICADO (COM TARJETA PREMIUM)
+                      SizedBox(
+                        width: cardWidth,
+                        height: cardHeight,
+                        child: _GridItemCard(
+                          icone: const Text('🏆', style: TextStyle(fontSize: 48)),
+                          titulo: 'Certificado\nde Artista',
+                          showPremiumBadge: !_desbloqueado, 
+                          showFreeBadge: false,
+                          onTap: () {
+                            if (!_desbloqueado) {
+                              _mostrarDialogoDesbloqueio();
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const CertificateScreen(),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+
+                      // 3. CATEGORIAS DE DESENHOS
+                      ...categorias.map((categoria) {
+                        final liberada = _categoriaEstaLiberada(categoria);
+                        final gratisEsteMes =
+                            categoria.id == _categoriaGratisMes &&
+                                !_desbloqueado;
+                        return SizedBox(
+                          width: cardWidth,
+                          height: cardHeight,
+                          child: _GridItemCard(
+                            icone: Text(categoria.icone, style: const TextStyle(fontSize: 48)),
+                            titulo: categoria.nome,
+                            showPremiumBadge: !liberada,
+                            showFreeBadge: gratisEsteMes,
+                            onTap: () => _abrirCategoria(categoria),
+                          ),
+                        );
+                      }),
+                    ],
                   );
                 },
               ),
@@ -296,16 +296,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _CategoriaCard extends StatelessWidget {
-  final Categoria categoria;
-  final bool bloqueada;
-  final bool gratisEsteMes;
+// NOVO WIDGET GENÉRICO PARA O GRID
+class _GridItemCard extends StatelessWidget {
+  final Widget icone;
+  final String titulo;
+  final bool showPremiumBadge;
+  final bool showFreeBadge;
   final VoidCallback onTap;
 
-  const _CategoriaCard({
-    required this.categoria,
-    required this.bloqueada,
-    required this.gratisEsteMes,
+  const _GridItemCard({
+    required this.icone,
+    required this.titulo,
+    required this.showPremiumBadge,
+    required this.showFreeBadge,
     required this.onTap,
   });
 
@@ -323,10 +326,10 @@ class _CategoriaCard extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(categoria.icone, style: const TextStyle(fontSize: 48)),
+                icone,
                 const SizedBox(height: 8),
                 Text(
-                  categoria.nome,
+                  titulo,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -335,7 +338,7 @@ class _CategoriaCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (bloqueada)
+            if (showPremiumBadge)
               Positioned(
                 top: 8,
                 right: 8,
@@ -369,7 +372,7 @@ class _CategoriaCard extends StatelessWidget {
                   ),
                 ),
               )
-            else if (gratisEsteMes)
+            else if (showFreeBadge)
               Positioned(
                 top: 8,
                 right: 8,
