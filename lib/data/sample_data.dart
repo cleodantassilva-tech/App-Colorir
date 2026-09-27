@@ -21,6 +21,7 @@ const List<Categoria> categorias = [
   Categoria(id: 'monstros_fofos', nome: 'Monstros Fofos', icone: '🦖', premium: true),
   Categoria(id: 'jardim', nome: 'Jardim', icone: '🌷', premium: true),
   Categoria(id: 'dragao', nome: 'Dragão', icone: '🐉', premium: true),
+  Categoria(id: 'dragao_fofo', nome: 'Dragão Fofo', icone: '🐲', premium: true),
   Categoria(id: 'monster_truck', nome: 'Monster Truck', icone: '🚚', premium: true),
   Categoria(id: 'outros', nome: 'Outros', icone: '✨', premium: true),
 ];
